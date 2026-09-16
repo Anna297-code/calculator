@@ -1,36 +1,36 @@
-// function add(a, b) {
-//   return a + b;
-// }
+const display = document.getElementById("display");
+const container = document.getElementById("buttons");
 
-// function subtract(a, b) {
-//   return a - b;
-// }
+for (let index = 0; index < 10; index++) {
+  const numberButton = document.createElement("button");
+  numberButton.textContent = index;
+  container.appendChild(numberButton);
+}
+// creates number buttons from 0-9 and appends them to container div
 
-// function multiply(a, b) {
-//   return a * b;
-// }
+const operatorSymbols = ["+", "-", "*", "/", "="];
 
-// function divide(a, b) {
-//   return a / b;
-// }
+for (let index = 0; index < operatorSymbols.length; index++) {
+  const operatorButton = document.createElement("button");
+  operatorButton.textContent = operatorSymbols[index];
+  container.appendChild(operatorButton);
+}
 
-// let firstNumber = a;
-// let operator = b;
-// let secondNumber = c;
+// creates the 4 operator buttons and appends them to contianer div
 
-// function operate(firstNumber, operator, secondNumber) {
-//   add(firstNumber, secondNumber);
-//   subtract(firstNumber, secondNumber);
-//   multiply(firstNumber, secondNumber);
-//   divide(firstNumber, secondNumber);
-// }
+const clearButton = document.createElement("button");
+clearButton.textContent = "Clear";
+container.appendChild(clearButton);
 
-// create 16 buttons
-// const buttons_container = document.querySelector(".buttons-container");
+// creates clear button and appends it to container div
 
-// for (let index = 0; index < 15; index++) {
-//   const button = document.createElement("button");
-//   button.classList.add("button");
-//   buttons_container.appendChild(button);
-// }
+let num1 = null;
+let operatorInput = null;
+let num2 = null;
 
+// add event listener to number buttons that when clicked adds the number to the display and also updates a variable
+container.addEventListener("click", (e) => {
+  buttonText = e.target.textContent;
+  display.textContent = buttonText;
+  num1 = buttonText;
+});
