@@ -25,6 +25,11 @@ for (let index = 0; index < operatorSymbols.length; index++) {
   buttonsBox.appendChild(operatorButton);
 }
 
+const decimalButton = document.createElement("button");
+decimalButton.textContent = ".";
+decimalButton.classList.add("decimal-btn");
+buttonsBox.appendChild(decimalButton);
+
 const equalsButton = document.createElement("button");
 equalsButton.textContent = "=";
 buttonsBox.appendChild(equalsButton);
@@ -112,7 +117,27 @@ allOperatorButtons.forEach((btn) => {
   });
 });
 
-equalsButton.addEventListener("click", (e) => {
+decimalButton.addEventListener("click", () => {
+  if (operator === null) {
+    if (!firstNum) {
+      displayBox.textContent = "0.";
+      firstNum = "0.";
+    } else if (!firstNum.includes(".")) {
+      displayBox.textContent += ".";
+      firstNum += ".";
+    }
+  } else {
+    if (!secondNum) {
+      displayBox.textContent = "0.";
+      secondNum = "0.";
+    } else if (!secondNum.includes(".")) {
+      displayBox.textContent += ".";
+      secondNum += ".";
+    }
+  }
+});
+
+equalsButton.addEventListener("click", () => {
   if (firstNum !== null && operator !== null && secondNum !== null) {
     const num1 = parseFloat(firstNum);
     const num2 = parseFloat(secondNum);
@@ -126,7 +151,7 @@ equalsButton.addEventListener("click", (e) => {
   }
 });
 
-clearButton.addEventListener("click", (e) => {
+clearButton.addEventListener("click", () => {
   displayBox.textContent = null;
   firstNum = null;
   operator = null;
