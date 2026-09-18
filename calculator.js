@@ -1,36 +1,96 @@
-const display = document.getElementById("display");
-const container = document.getElementById("buttons");
 
-for (let index = 0; index < 10; index++) {
-  const numberButton = document.createElement("button");
-  numberButton.textContent = index;
-  container.appendChild(numberButton);
-}
-// creates number buttons from 0-9 and appends them to container div
+let firstNum = null;
+let operator = null;
+let secondNum = null;
 
-const operatorSymbols = ["+", "-", "*", "/", "="];
-
-for (let index = 0; index < operatorSymbols.length; index++) {
-  const operatorButton = document.createElement("button");
-  operatorButton.textContent = operatorSymbols[index];
-  container.appendChild(operatorButton);
+function add(x, y){
+    return x + y
 }
 
-// creates the 4 operator buttons and appends them to contianer div
+function subtract(x, y){
+    return x - y
+}
 
-const clearButton = document.createElement("button");
-clearButton.textContent = "Clear";
-container.appendChild(clearButton);
+function multiply(x, y){
+    return x * y
+}
 
-// creates clear button and appends it to container div
+function divide(x, y){
+    return x/y
+}
 
-let num1 = null;
-let operatorInput = null;
-let num2 = null;
+function operate (a, b, c){
+    if(b === +){
+        add(a, c)
+    }
+    if(b === -){
+        subtract(a, c)
+    }
+    if(b === *){
+        multiply(a, c)
+    }
+    if(b === /){
+        if (c = 0 ){
+            return "Nice Try!"
+        } else {
+            divide(a, c)
+        }
 
-// add event listener to number buttons that when clicked adds the number to the display and also updates a variable
-container.addEventListener("click", (e) => {
-  buttonText = e.target.textContent;
-  display.textContent = buttonText;
-  num1 = buttonText;
+
+
+
+    }
+}
+
+numberButton.addEventListener("click", (e) => {
+  if (firstNum === null && secondNum === null){
+    display.textContent = e.target.textContent
+    firstNum = e.target.textContent
+  } 
+  else if (firstNum !== null && secondNum === null){
+    display.textContent = e.target.textContent
+    secondNum = e.target.textContent
+  }
+
+  else if(firstNum !== null && secondNum !== null){
+    display.textContent += e.target.textContent
+    secondNum += e.target.textContent
+  }
+  
+  else {
+    display.textContent += e.target.textContent
+    firstNum += e.target.textContent
+  }
+
+operatorButton.addEventListener("click", (e) => {
+  if (operator === null) {
+    operator = e.target.textContent;
+  } else if (operator !== null && secondNum !== null){
+    result = operate(firstNum, operator, secondNum)
+    display.textContent = result
+    firstNum = result
+    operator = e.target.textContent
+    secondNum = null
+  } else {
+    operator = e.target.textContent
+  }
 });
+
+equalsButton.addEventListener("click", (e) => {
+    if (secondNum !== null){
+    result = operate(firstNum, operator, secondNum)
+    display.textContent = result
+    } else {
+        display.textContent = firstNum
+    }
+
+})
+
+clearButton.addEventListener("click", (e) => {
+    display.textContent = null
+    firstNum = null
+    operator = null
+    secondNum = null
+})
+
+
