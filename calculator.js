@@ -38,6 +38,11 @@ const clearButton = document.createElement("button");
 clearButton.textContent = "CLEAR";
 buttonsBox.appendChild(clearButton);
 
+const backSpaceButton = document.createElement("button");
+backSpaceButton.textContent = "Del";
+backSpaceButton.classList.add("backspace-btn");
+buttonsBox.appendChild(backSpaceButton);
+
 function add(x, y) {
   return x + y;
 }
@@ -73,10 +78,16 @@ function operate(a, b, c) {
   }
 }
 
+function roundResult(number) {
+  return Math.round(number * 10000) / 10000;
+}
+
 const allNumberButtons = document.querySelectorAll(".num-btn");
 
 allNumberButtons.forEach((btn) => {
   btn.addEventListener("click", (e) => {
+    console.log("Number button listener triggered by:", e.target.textContent);
+
     if (operator === null) {
       if (firstNum === null || firstNum === "0") {
         displayBox.textContent = e.target.textContent;
@@ -106,11 +117,22 @@ allOperatorButtons.forEach((btn) => {
     } else if (operator !== null && secondNum !== null) {
       const num1 = parseFloat(firstNum);
       const num2 = parseFloat(secondNum);
+
       const result = operate(num1, operator, num2);
-      displayBox.textContent = result;
-      firstNum = result.toString();
-      operator = e.target.textContent;
-      secondNum = null;
+
+      if (result === "Nice Try!") {
+        displayBox.textContent = result;
+
+        firstNum = null;
+        operator = null;
+        secondNum = null;
+      } else {
+        const roundedResult = roundResult(result);
+        displayBox.textContent = roundedResult;
+        firstNum = roundedResult.toString();
+        operator = e.target.textContent;
+        secondNum = null;
+      }
     } else {
       operator = e.target.textContent;
     }
@@ -138,16 +160,34 @@ decimalButton.addEventListener("click", () => {
 });
 
 equalsButton.addEventListener("click", () => {
-  if (firstNum !== null && operator !== null && secondNum !== null) {
-    const num1 = parseFloat(firstNum);
-    const num2 = parseFloat(secondNum);
-    const result = operate(num1, operator, num2);
+  if (firstNum === null) {
+    displayBox.textContent = null;
+    return;
+  }
+
+  if (operator === null || secondNum === null) {
+    displayBox.textContent = firstNum;
+    firstNum = null;
+    return;
+  }
+
+  const num1 = parseFloat(firstNum);
+  const num2 = parseFloat(secondNum);
+  const result = operate(num1, operator, num2);
+
+  if (result === "Nice Try!") {
     displayBox.textContent = result;
-    firstNum = result.toString();
+
+    firstNum = null;
     operator = null;
     secondNum = null;
   } else {
-    displayBox.textContent = firstNum;
+    const roundedResult = roundResult(result);
+    displayBox.textContent = roundedResult;
+    firstNum = roundedResult.toString();
+    firstNum = null;
+    operator = null;
+    secondNum = null;
   }
 });
 
@@ -158,6 +198,31 @@ clearButton.addEventListener("click", () => {
   secondNum = null;
 });
 
-console.log(firstNum);
-console.log(operator);
-console.log(secondNum);
+backSpaceButton.addEventListener("click", () => {
+    if(operator === null){
+        if (firstNum !== null && firstNum !== "") {
+        firstNum = firstNum.slice(0, -1);
+        displayBox.textContent = firstNum;
+        }
+
+        if (firstNum === "") {
+        firstNum = null;
+        displayBox.textContent = null;
+    }
+  }
+
+
+    if (operator !== null){
+        if (secondNum !== null && secondNum !== ""){
+            secondNum = secondNum.slice(0, -1);
+            displayBox.textContent = secondNum;
+        }
+
+        if (secondNum === ""){
+            secondNum = null
+            displayBox.textContent = null
+        }
+    }
+
+  
+});
