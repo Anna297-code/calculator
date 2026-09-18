@@ -1,96 +1,138 @@
-
 let firstNum = null;
 let operator = null;
 let secondNum = null;
 
-function add(x, y){
-    return x + y
+const containerBox = document.querySelector(".container");
+const displayBox = document.getElementById("display");
+const buttonsBox = document.getElementById("buttons");
+
+containerBox.appendChild(displayBox);
+containerBox.appendChild(buttonsBox);
+
+for (let index = 0; index < 10; index++) {
+  const numberButton = document.createElement("button");
+  numberButton.textContent = index;
+  numberButton.classList.add("num-btn");
+  buttonsBox.appendChild(numberButton);
 }
 
-function subtract(x, y){
-    return x - y
+const operatorSymbols = ["+", "-", "*", "/"];
+
+for (let index = 0; index < operatorSymbols.length; index++) {
+  const operatorButton = document.createElement("button");
+  operatorButton.textContent = operatorSymbols[index];
+  operatorButton.classList.add("oper-btn");
+  buttonsBox.appendChild(operatorButton);
 }
 
-function multiply(x, y){
-    return x * y
+const equalsButton = document.createElement("button");
+equalsButton.textContent = "=";
+buttonsBox.appendChild(equalsButton);
+
+const clearButton = document.createElement("button");
+clearButton.textContent = "CLEAR";
+buttonsBox.appendChild(clearButton);
+
+function add(x, y) {
+  return x + y;
 }
 
-function divide(x, y){
-    return x/y
+function subtract(x, y) {
+  return x - y;
 }
 
-function operate (a, b, c){
-    if(b === +){
-        add(a, c)
-    }
-    if(b === -){
-        subtract(a, c)
-    }
-    if(b === *){
-        multiply(a, c)
-    }
-    if(b === /){
-        if (c = 0 ){
-            return "Nice Try!"
-        } else {
-            divide(a, c)
-        }
-
-
-
-
-    }
+function multiply(x, y) {
+  return x * y;
 }
 
-numberButton.addEventListener("click", (e) => {
-  if (firstNum === null && secondNum === null){
-    display.textContent = e.target.textContent
-    firstNum = e.target.textContent
-  } 
-  else if (firstNum !== null && secondNum === null){
-    display.textContent = e.target.textContent
-    secondNum = e.target.textContent
+function divide(x, y) {
+  return x / y;
+}
+
+function operate(a, b, c) {
+  if (b === "+") {
+    return add(a, c);
   }
+  if (b === "-") {
+    return subtract(a, c);
+  }
+  if (b === "*") {
+    return multiply(a, c);
+  }
+  if (b === "/") {
+    if (c === 0) {
+      return "Nice Try!";
+    } else {
+      return divide(a, c);
+    }
+  }
+}
 
-  else if(firstNum !== null && secondNum !== null){
-    display.textContent += e.target.textContent
-    secondNum += e.target.textContent
-  }
-  
-  else {
-    display.textContent += e.target.textContent
-    firstNum += e.target.textContent
-  }
+const allNumberButtons = document.querySelectorAll(".num-btn");
 
-operatorButton.addEventListener("click", (e) => {
-  if (operator === null) {
-    operator = e.target.textContent;
-  } else if (operator !== null && secondNum !== null){
-    result = operate(firstNum, operator, secondNum)
-    display.textContent = result
-    firstNum = result
-    operator = e.target.textContent
-    secondNum = null
-  } else {
-    operator = e.target.textContent
-  }
+allNumberButtons.forEach((btn) => {
+  btn.addEventListener("click", (e) => {
+    if (operator === null) {
+      if (firstNum === null || firstNum === "0") {
+        displayBox.textContent = e.target.textContent;
+        firstNum = e.target.textContent;
+      } else {
+        displayBox.textContent += e.target.textContent;
+        firstNum += e.target.textContent;
+      }
+    } else {
+      if (secondNum === null) {
+        displayBox.textContent = e.target.textContent;
+        secondNum = e.target.textContent;
+      } else {
+        displayBox.textContent += e.target.textContent;
+        secondNum += e.target.textContent;
+      }
+    }
+  });
+});
+
+const allOperatorButtons = document.querySelectorAll(".oper-btn");
+
+allOperatorButtons.forEach((btn) => {
+  btn.addEventListener("click", (e) => {
+    if (operator === null) {
+      operator = e.target.textContent;
+    } else if (operator !== null && secondNum !== null) {
+      const num1 = parseFloat(firstNum);
+      const num2 = parseFloat(secondNum);
+      const result = operate(num1, operator, num2);
+      displayBox.textContent = result;
+      firstNum = result.toString();
+      operator = e.target.textContent;
+      secondNum = null;
+    } else {
+      operator = e.target.textContent;
+    }
+  });
 });
 
 equalsButton.addEventListener("click", (e) => {
-    if (secondNum !== null){
-    result = operate(firstNum, operator, secondNum)
-    display.textContent = result
-    } else {
-        display.textContent = firstNum
-    }
-
-})
+  if (firstNum !== null && operator !== null && secondNum !== null) {
+    const num1 = parseFloat(firstNum);
+    const num2 = parseFloat(secondNum);
+    const result = operate(num1, operator, num2);
+    displayBox.textContent = result;
+    firstNum = result.toString();
+    operator = null;
+    secondNum = null;
+  } else {
+    displayBox.textContent = firstNum;
+  }
+});
 
 clearButton.addEventListener("click", (e) => {
-    display.textContent = null
-    firstNum = null
-    operator = null
-    secondNum = null
-})
+  displayBox.textContent = null;
+  firstNum = null;
+  operator = null;
+  secondNum = null;
+});
 
-
+console.log(firstNum);
+console.log(operator);
+console.log(secondNum);
