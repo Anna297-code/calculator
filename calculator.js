@@ -1,47 +1,33 @@
 let firstNum = null;
 let operator = null;
 let secondNum = null;
+let isCalculated = false;
+//  this is so my number buttons know to clear the screen when you type a brand new number instead of an operator after hitting equals
 
-const containerBox = document.querySelector(".container");
 const displayBox = document.getElementById("display");
 const buttonsBox = document.getElementById("buttons");
 
-containerBox.appendChild(displayBox);
-containerBox.appendChild(buttonsBox);
+function createButton(text, className) {
+  const button = document.createElement("button");
+  button.textContent = text;
+  button.classList.add(className);
+  buttonsBox.appendChild(button);
+  return button;
+}
 
 for (let index = 0; index < 10; index++) {
-  const numberButton = document.createElement("button");
-  numberButton.textContent = index;
-  numberButton.classList.add("num-btn");
-  buttonsBox.appendChild(numberButton);
+  createButton(index, "num-btn");
 }
 
 const operatorSymbols = ["+", "-", "*", "/"];
-
 for (let index = 0; index < operatorSymbols.length; index++) {
-  const operatorButton = document.createElement("button");
-  operatorButton.textContent = operatorSymbols[index];
-  operatorButton.classList.add("oper-btn");
-  buttonsBox.appendChild(operatorButton);
+  createButton(operatorSymbols[index], "oper-btn");
 }
 
-const decimalButton = document.createElement("button");
-decimalButton.textContent = ".";
-decimalButton.classList.add("decimal-btn");
-buttonsBox.appendChild(decimalButton);
-
-const equalsButton = document.createElement("button");
-equalsButton.textContent = "=";
-buttonsBox.appendChild(equalsButton);
-
-const clearButton = document.createElement("button");
-clearButton.textContent = "CLEAR";
-buttonsBox.appendChild(clearButton);
-
-const backSpaceButton = document.createElement("button");
-backSpaceButton.textContent = "Del";
-backSpaceButton.classList.add("backspace-btn");
-buttonsBox.appendChild(backSpaceButton);
+const decimalButton = createButton(".", "decimal-btn");
+const equalsButton = createButton("=", "equals-btn");
+const clearButton = createButton("CLEAR", "clear-btn");
+const backSpaceButton = createButton("Del", "backspace-btn");
 
 function add(x, y) {
   return x + y;
@@ -59,21 +45,21 @@ function divide(x, y) {
   return x / y;
 }
 
-function operate(a, b, c) {
-  if (b === "+") {
-    return add(a, c);
+function operate(num1, operator, num2) {
+  if (operator === "+") {
+    return add(num1, num2);
   }
-  if (b === "-") {
-    return subtract(a, c);
+  if (operator === "-") {
+    return subtract(num1, num2);
   }
-  if (b === "*") {
-    return multiply(a, c);
+  if (operator === "*") {
+    return multiply(num1, num2);
   }
-  if (b === "/") {
-    if (c === 0) {
+  if (operator === "/") {
+    if (num2 === 0) {
       return "Nice Try!";
     } else {
-      return divide(a, c);
+      return divide(num1, num2);
     }
   }
 }
@@ -82,12 +68,24 @@ function roundResult(number) {
   return Math.round(number * 10000) / 10000;
 }
 
+function clearCalculator() {
+  firstNum = null;
+  operator = null;
+  secondNum = null;
+  isCalculated = false;
+}
 const allNumberButtons = document.querySelectorAll(".num-btn");
 
 allNumberButtons.forEach((btn) => {
   btn.addEventListener("click", (e) => {
-    console.log("Number button listener triggered by:", e.target.textContent);
-
+    if (isCalculated) {
+      displayBox.textContent = e.target.textContent;
+      firstNum = e.target.textContent;
+      operator = null;
+      secondNum = null;
+      isCalculated = false;
+      return;
+    }
     if (operator === null) {
       if (firstNum === null || firstNum === "0") {
         displayBox.textContent = e.target.textContent;
@@ -112,9 +110,14 @@ const allOperatorButtons = document.querySelectorAll(".oper-btn");
 
 allOperatorButtons.forEach((btn) => {
   btn.addEventListener("click", (e) => {
+    if (isCalculated) {
+      isCalculated = false;
+      operator = e.target.textContent;
+      return;
+    }
     if (operator === null) {
       operator = e.target.textContent;
-    } else if (operator !== null && secondNum !== null) {
+    } else if (secondNum !== null) {
       const num1 = parseFloat(firstNum);
       const num2 = parseFloat(secondNum);
 
@@ -122,10 +125,7 @@ allOperatorButtons.forEach((btn) => {
 
       if (result === "Nice Try!") {
         displayBox.textContent = result;
-
-        firstNum = null;
-        operator = null;
-        secondNum = null;
+        clearCalculator();
       } else {
         const roundedResult = roundResult(result);
         displayBox.textContent = roundedResult;
@@ -167,7 +167,6 @@ equalsButton.addEventListener("click", () => {
 
   if (operator === null || secondNum === null) {
     displayBox.textContent = firstNum;
-    firstNum = null;
     return;
   }
 
@@ -177,52 +176,44 @@ equalsButton.addEventListener("click", () => {
 
   if (result === "Nice Try!") {
     displayBox.textContent = result;
-
-    firstNum = null;
-    operator = null;
-    secondNum = null;
+    clearCalculator();
   } else {
     const roundedResult = roundResult(result);
     displayBox.textContent = roundedResult;
     firstNum = roundedResult.toString();
-    firstNum = null;
     operator = null;
     secondNum = null;
+    isCalculated = true;
   }
 });
 
 clearButton.addEventListener("click", () => {
   displayBox.textContent = null;
-  firstNum = null;
-  operator = null;
-  secondNum = null;
+  clearCalculator();
 });
 
 backSpaceButton.addEventListener("click", () => {
-    if(operator === null){
-        if (firstNum !== null && firstNum !== "") {
-        firstNum = firstNum.slice(0, -1);
-        displayBox.textContent = firstNum;
-        }
+  if (operator === null) {
+    if (firstNum !== null && firstNum !== "") {
+      firstNum = firstNum.slice(0, -1);
+      displayBox.textContent = firstNum;
+    }
 
-        if (firstNum === "") {
-        firstNum = null;
-        displayBox.textContent = null;
+    if (firstNum === "") {
+      firstNum = null;
+      displayBox.textContent = null;
     }
   }
 
-
-    if (operator !== null){
-        if (secondNum !== null && secondNum !== ""){
-            secondNum = secondNum.slice(0, -1);
-            displayBox.textContent = secondNum;
-        }
-
-        if (secondNum === ""){
-            secondNum = null
-            displayBox.textContent = null
-        }
+  if (operator !== null) {
+    if (secondNum !== null && secondNum !== "") {
+      secondNum = secondNum.slice(0, -1);
+      displayBox.textContent = secondNum;
     }
 
-  
+    if (secondNum === "") {
+      secondNum = null;
+      displayBox.textContent = null;
+    }
+  }
 });
